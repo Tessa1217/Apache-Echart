@@ -2,6 +2,7 @@
 import { ref, onBeforeMount } from "vue";
 import _ from "lodash";
 /** Components */
+import DefaultStatLayout from "@/views/layout/DefaultStatLayout.vue";
 import SketchedLineChart from "@/components/chart/SketchedLineChart.vue";
 
 /** Hooks */
@@ -47,38 +48,44 @@ const series = ref(
 const dataList = ref([]);
 </script>
 <template>
-  <h3>Sketched Line Chart Demo</h3>
-  <div class="chart-container">
-    <SketchedLineChart :xAxisArray="months" :series="series" />
-  </div>
-  <div class="table-container mt-3">
-    <table class="table table-hover">
-      <caption>
-        Sketched Line Chart Data Table
-      </caption>
-      <colgroup>
-        <col />
-        <col />
-        <col />
-        <col />
-      </colgroup>
-      <thead>
-        <tr>
-          <th scope="col" rowspan="2">Month</th>
-          <th v-for="(category, index) in categories" :key="index" scope="col">
-            {{ category }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(data, index) in monthlyData" :key="index">
-          <td>{{ data.month }}</td>
-          <td v-for="category in categories" :key="category">
-            {{ data[category] }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <DefaultStatLayout>
+    <template #pageTitle>Sketched Line Chart Demo</template>
+    <template #chart>
+      <SketchedLineChart :xAxisArray="months" :series="series" />
+    </template>
+    <template #table>
+      <table class="table table-hover">
+        <caption>
+          Sketched Line Chart Data Table
+        </caption>
+        <colgroup>
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col" rowspan="2">Month</th>
+            <th
+              v-for="(category, index) in categories"
+              :key="index"
+              scope="col"
+            >
+              {{ category }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(data, index) in monthlyData" :key="index">
+            <td>{{ data.month }}</td>
+            <td v-for="category in categories" :key="category">
+              {{ data[category] }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </template>
+  </DefaultStatLayout>
 </template>
 <style scoped></style>
