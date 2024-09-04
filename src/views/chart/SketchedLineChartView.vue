@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, reactive, watch } from "vue";
 import _ from "lodash";
 /** Components */
 import DefaultStatLayout from "@/views/layout/DefaultStatLayout.vue";
@@ -24,13 +24,22 @@ const monthlyData = ref([
   { month: "April", Drink: 45, Food: 65, NonConsumable: 28 },
   { month: "May", Drink: 50, Food: 70, NonConsumable: 22 },
   { month: "June", Drink: 55, Food: 75, NonConsumable: 27 },
+]);
+
+const changingData = [
   { month: "July", Drink: 60, Food: 80, NonConsumable: 32 },
   { month: "August", Drink: 65, Food: 85, NonConsumable: 35 },
   { month: "September", Drink: 70, Food: 90, NonConsumable: 40 },
   { month: "October", Drink: 75, Food: 95, NonConsumable: 38 },
   { month: "November", Drink: 80, Food: 100, NonConsumable: 33 },
   { month: "December", Drink: 85, Food: 105, NonConsumable: 30 },
-]);
+];
+
+const changeData = () => {
+  monthlyData.value = [...changingData];
+};
+
+const checkReactivity = ref(monthlyData.value);
 
 const months = ref(_.map(monthlyData.value, "month"));
 
@@ -45,13 +54,30 @@ const series = ref(
   }))
 );
 
+watch(
+  monthlyData,
+  (newData) => {
+    months.value = _.map(monthlyData.value, "month");
+    series.value = categories.value.map((category) => ({
+      name: category,
+      type: "line",
+      stack: "Total",
+      data: _.map(monthlyData.value, category),
+    }));
+  },
+  { deep: true }
+);
+
 const dataList = ref([]);
 </script>
 <template>
   <DefaultStatLayout>
-    <template #pageTitle>Sketched Line Chart Demo</template>
+    <template #pageTitle
+      >Sketched Line Chart Demo
+      <button @click="changeData()">change data</button>
+    </template>
     <template #chart>
-      <SketchedLineChart :xAxisArray="months" :series="series" />
+      <SketchedLineChart v-bind="{ xAxisArray: months, series: series }" />
     </template>
     <template #table>
       <table class="table table-hover">

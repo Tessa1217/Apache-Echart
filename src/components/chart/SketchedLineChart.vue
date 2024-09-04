@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide } from "vue";
+import { ref, provide, watch } from "vue";
 import _ from "lodash";
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
@@ -64,6 +64,25 @@ const option = ref({
   },
   series: props.series,
 });
+
+watch(
+  () => [props.xAxis, props.series],
+  ([newMonths, newSeries]) => {
+    option.value = {
+      ...option.value,
+      xAxis: {
+        type: "category",
+        boundaryGap: false,
+        data: newMonths,
+      },
+      series: newSeries,
+      legend: {
+        data: _.map(newSeries, "name"),
+      },
+    };
+  },
+  { deep: true }
+);
 
 /** Methods */
 </script>
